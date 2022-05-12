@@ -1,0 +1,21 @@
+{
+    "paymentConfiguration": {
+        "requiresAuthenticationForPreAuthorizedPaymentOption": false,
+        "allowInstallmentsMerge": null,
+        "blockPaymentSession": null,
+        "paymentSystemToCheckFirstInstallment": null,
+        "defaultPaymentSystemToApplyOnUserOrderForm": null
+    },
+    "taxConfiguration": null,
+    "minimumQuantityAccumulatedForItems": 1,
+    "decimalDigitsPrecision": 2,
+    "minimumValueAccumulated": 0,
+    "apps": [],
+    "allowMultipleDeliveries": false,
+    "allowManualPrice": null,
+    "savePersonalDataAsOptIn": false,
+    "maxNumberOfWhiteLabelSellers": null,
+    "maskFirstPurchaseData": null,
+    "recaptchaValidation": "vtexcriteria",
+    "maskStateOnAddress": null
+}

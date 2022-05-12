@@ -1,0 +1,36 @@
+{
+    "paymentConfiguration": {
+        "requiresAuthenticationForPreAuthorizedPaymentOption": false,
+        "allowInstallmentsMerge": null,
+        "blockPaymentSession": null,
+        "paymentSystemToCheckFirstInstallment": null,
+        "defaultPaymentSystemToApplyOnUserOrderForm": null
+    },
+    "taxConfiguration": null,
+    "minimumQuantityAccumulatedForItems": 1,
+    "decimalDigitsPrecision": 2,
+    "minimumValueAccumulated": 0,
+    "apps": [
+        {
+            "id": "coaf-data",
+            "fields": [
+                "politicamenteExposto",
+                "parenteExposto",
+                "grauParentesco",
+                "posicaoPublica",
+                "qualPosicaoPublica",
+                "estrangeiro",
+                "nacionalidade",
+                "filiacaoPassaporte",
+                "numeroSerie"
+            ]
+        }
+    ],
+    "allowMultipleDeliveries": false,
+    "allowManualPrice": null,
+    "savePersonalDataAsOptIn": false,
+    "maxNumberOfWhiteLabelSellers": null,
+    "maskFirstPurchaseData": null,
+    "recaptchaValidation": "vtexcriteria",
+    "maskStateOnAddress": null
+}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+    <form id="coaf_form" enctype="multipart/form-data">
+
+        <label for="pessoa politicamente exposta">PESSOA POLITICAMENTE EXPOSTA: <span>(?)</span></label>
+        <select id="ppe">
+            <option id="" value=""></option>
+            <option id="ppe-s" value="sim">Sim</option>
+            <option id="ppe-n" value="nao">Não</option>
+        </select>
+        <br>
+
+
+
+        <!-- Condicao ppe -  abre os parentes -->
+        <label for="parentesco com pessoa politicamente exposta">PARENTESCO COM PESSOA POLITICAMENTE EXPOSTA:</label>
+        <select id="pppe">
+            <option id="" value=""></option>
+            <option id="pppe-p" value="possuo">Possuo</option>
+            <option id="pppe-np" value="nao possuo">Não Possuo</option>
+        </select>
+        </div>
+
+        <div id="pppe-possuo" style="display: none;">
+            <label for="grau de parentesco">Grau de Parentesco</label>
+            <select id="gp">
+                <option id="gp-conj" value="conjuge">Cônjuge</option>
+                <option id="gp-comp" value="companheiro">Companheiro(a)</option>
+                <option id="gp-cpm" value="pai mae">Pai / Mãe</option>
+                <option id="gp-cff" value="filho filha">Filho / Filha</option>
+                <option id="gp-caa" value="avo">Avô / Avó</option>
+                <option id="gp-cnn" value="neto neta">Neto / Neta</option>
+                <option id="gp-cee" value="enteado enteada">Enteado / Enteada</option>
+            </select>
+        </div><br>
+
+
+
+        <!-- Condicao - qual posicao publica -->
+        <label for="ocupa posicao publica">Ocupa posição pública:</label>
+        <select id="opp">
+            <option id="" value=""></option>
+            <option id="opp-s" value="sim">Sim</option>
+            <option id="opp-n" value="nao">Não</option>
+        </select>
+
+
+        <div id="opp-sim" style="display: none;">
+            <label for="qualPosicao">Se sim, qual:</label>
+            <input id="qualPosicao" name="qualPosicao" type="text">
+        </div><br>
+
+
+
+        <!-- Condicao - Dados do passaporte -->
+        <label for="e estrangeiro">É estrangeiro:</label>
+        <select id="ee">
+            <option id="" value=""></option>
+            <option id="ee-s" value="sim">Sim</option>
+            <option id="ee-n" value="nao">Não</option>
+        </select>
+
+        <div id="ee-sim" style="display: none;">
+            <label>Insira os dados de seu passaporte:</label>
+            <label for="nacionalidade">Nacionalidade</label>
+            <input id="nacionalidade" type="text" placeholder="Brasileiro(a)" name="nacionalidade">
+
+            <label for="data de nascimento">Data de Nascimento</label>
+            <input id="dataNascimento" name="dataNascimento" type="date" value="2022-05-01">
+
+            <label for="filiacao">Filiação</label>
+            <input id="filiacao" type="number" name="filiacao">
+
+            <label for="numero de serie" name="numeroSerie" id="numeroSerie">Número de Série</label>
+            <input id="numeroSerie" type="text">
+        </div>
+
+
+        <input type="submit" value="Enviar">
+
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $("#pppe").change(function () {
+                let selected = $("#pppe option:selected").val();
+
+                console.log(selected)
+                selected == 'possuo' ? $('#pppe-possuo').show() : $('#pppe-possuo').hide();
+            });
+
+            $("#opp").change(function () {
+                let selected = $("#opp option:selected").val();
+
+                console.log(selected)
+                selected == 'sim' ? $('#opp-sim').show() : $('#opp-sim').hide();
+            });
+
+            $("#ee").change(function () {
+                let selected = $("#ee option:selected").val();
+
+                console.log(selected)
+                selected == 'sim' ? $('#ee-sim').show() : $('#ee-sim').hide();
+            });
+           
+        })
+        $('#coaf_form').on('submit', function (e) {
+
+            e.preventDefault()
+
+            let clientObj = {
+                politicamenteExposto: $("#ppe option:selected").val(),
+                parenteExposto: $("#pppe option:selected").val(),
+                grauParentesco: $("#gp option:selected").val(),
+                posicaoPublica: $("#opp option:selected").val(),
+                qualPosicaoPublica: $("#qualPosicao").val(),
+                estrangeiro: $("#ee option:selected").val(),
+                nacionalidade: $("#nacioladidade").val(),
+                filiacaoPassaporte: $("#filiacao").val(),
+                numeroSerie: $("#numeroSerie").val(),
+                birthDate: $('#dataNascimento').val()
+            }
+
+            console.log(clientObj)
+
+            fetch('api/dataentities/CL/documents', {
+                "headers": {
+                    "Accept": "application/vnd.vtex.ds.v10+json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(clientObj)
+            }).then(response => {
+
+            }).catch(err => {
+                console.log(err)
+            })
+
+        });
+
+    </script>
+
+</body>
+
+</html>
