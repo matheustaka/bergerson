@@ -198,19 +198,32 @@
             $(document).ready(function () {
                 var e = {
                     init: function () {
-                        e.addHtml(), e.checkOpenTextField(), e.addSellersellerCheckout(), e.dropDownCupons();
+                        e.addHtml(), e.addCoafCheckout(), e.addSellersellerCheckout(), e.dropDownCupons();
                     },
                     addSellersellerCheckout: function () {
                         $(document).on("click", "#cart-seller-code-add", function () {
-                            var e = $("#seller").val(),
-                                t = $(".mini-cart #seller").val();
-                            ((e && e.length) || (console.log("Campo Seller Carrinho Vazio"), t && t.length)) &&
-                                vtexjs.checkout.getOrderForm().done(function () {
-                                    vtexjs.checkout.sendAttachment("openTextField", { value: e || t }).done(function (e) {
-                                        var t = e.openTextField.value;
-                                        console.log(t), $(".seller-text").text(t), $(".seller-remove").show(), $(".seller-fields").hide();
+                            // var e = $("#seller").val(),
+                            //     t = $(".mini-cart #seller").val();
+                            // ((e && e.length) || (console.log("Campo Seller Carrinho Vazio"), t && t.length)) &&
+                            var valorCampoSeller = $("#seller").val();
+                            if (valorCampoSeller && valorCampoSeller.length) {
+                                vtexjs.checkout.getOrderForm()
+                                    .then(function (orderForm) {
+
+                                        var textFieldAtual = orderForm.openTextField.value
+                                        let observationValues = [textFieldAtual, valorCampoSeller].join(' ')
+
+                                        vtexjs.checkout.sendAttachment("openTextField", { value: observationValues }).done(function (e) {
+                                            var t = $("#seller").val()
+                                            console.log(t), $(".seller-text").text(t), $(".seller-remove").show(), $(".seller-fields").hide();
+                                        });
+                                    })
+                                    .done(function (orderForm) {
                                     });
-                                });
+                            } else {
+                                console.log('Campo Seller Carrinho Vazio')
+                            }
+
                         }),
                             $(document).on("click", ".remove-seller", function () {
                                 vtexjs.checkout
@@ -232,17 +245,67 @@
                     },
 
                     addCoafCheckout: function () {
+                        let coa = '<form id="coaf_form"> <label for="pessoa politicamente exposta">PESSOA POLITICAMENTE EXPOSTA: <span class="ppe-info"> <i aria-hidden="true" class="icon-question-sign help-seller"></i> <div class="ppe-details-popup field-help"><span>O agente público que desempenha ou tenha desempenhado, nos últimos 5 anos, no Brasil ou em país, território ou dependência estrangeira, cargo, emprego ou função pública relevante, assim como seus familiares (parentes na linha direta até o segundo grau, o cônjuge, o(a) companheiro(a), o(a) enteado(a) e pessoas de seu relacionamento próximo). Consideram-se pessoas expostas politicamente, todas aquelas descritas na <a href="https://www.gov.br/coaf/pt-br/acesso-a-informacao/Institucional/a-atividade-de-supervisao/regulacao/supervisao/normas-1/resolucao-coaf-no-40-de-22-de-novembro-de-2021" target="_blank">Resolução Coaf n° 40</a>, de 22 de novembro de 2021.</span></div></span> </label> <select id="ppe"> <option id="" value=""></option> <option id="ppe-s" value="sim">Sim</option> <option id="ppe-n" value="nao">Não</option> </select> <br><label for="parentesco com pessoa politicamente exposta">PARENTESCO COM PESSOA POLITICAMENTE EXPOSTA:</label> <select id="pppe"> <option id="" value=""></option> <option id="pppe-p" value="possuo">Possuo</option> <option id="pppe-np" value="nao possuo">Não Possuo</option> </select> </div><div id="pppe-possuo" style="display: none;"> <label for="grau de parentesco">Grau de Parentesco</label> <select id="gp"> <option id="gp-empty" value=""></option> <option id="gp-conj" value="conjuge">Cônjuge</option> <option id="gp-comp" value="companheiro">Companheiro(a)</option> <option id="gp-cpm" value="pai mae">Pai / Mãe</option> <option id="gp-cff" value="filho filha">Filho / Filha</option> <option id="gp-caa" value="avo">Avô / Avó</option> <option id="gp-cnn" value="neto neta">Neto / Neta</option> <option id="gp-cee" value="enteado enteada">Enteado / Enteada</option> </select> </div><br><label for="ocupa posicao publica">Ocupa posição pública:</label> <select id="opp"> <option id="" value=""></option> <option id="opp-s" value="sim">Sim</option> <option id="opp-n" value="nao">Não</option> </select> <div id="opp-sim" style="display: none;"> <label for="qualPosicao">Se sim, qual:</label> <input id="qualPosicao" name="qualPosicao" type="text"> </div><br><label for="e estrangeiro">É estrangeiro:</label> <select id="ee"> <option id="" value=""></option> <option id="ee-s" value="sim">Sim</option> <option id="ee-n" value="nao">Não</option> </select> <div id="ee-sim" style="display: none;"> <label>Insira os dados de seu passaporte:</label> <label for="nacionalidade">Nacionalidade</label> <input id="nacionalidade" type="text" placeholder="Brasileiro(a)" name="nacionalidade"> <label for="filiacao">Filiação</label> <input id="filiacao" type="text" name="filiacao"> <label for="numero de serie" name="numeroSerie" id="numeroSerie">Número de Série</label> <input id="numeroSerie" type="text"> </div></form>'
+                        $('.box-client-info .row-fluid').append('<div id="coaf"></div>');
+                        $('#coaf').append(coa);
+                        $("#pppe").change(function () {
+                            let selected = $("#pppe option:selected").val();
+                            selected == 'possuo' ? $('#pppe-possuo').show() : $('#pppe-possuo').hide();
+                        })
 
-                    }
-                    ,
-                    checkOpenTextField: function () {
-                        setTimeout(function () {
-                            if (vtexjs && vtexjs.checkout && vtexjs.checkout.orderForm && vtexjs.checkout.orderForm.openTextField) {
-                                var e = vtexjs.checkout.orderForm.openTextField.value;
-                                console.log(e), e && ($(".seller-text").text(e), $(".seller-remove").show(), $(".seller-fields").hide());
+                        $("#opp").change(function () {
+                            let selected = $("#opp option:selected").val();
+                            selected == 'sim' ? $('#opp-sim').show() : $('#opp-sim').hide();
+                        });
+
+                        $("#ee").change(function () {
+                            let selected = $("#ee option:selected").val();
+                            selected == 'sim' ? $('#ee-sim').show() : $('#ee-sim').hide();
+                        });
+
+                        $('#go-to-shipping').on('click', function (e) {
+                            let clientObj = {
+                                politicamenteExposto: $("#ppe option:selected").val(),
+                                parenteExposto: $("#pppe option:selected").val(),
+                                grauParentesco: $("#gp option:selected").val(),
+                                posicaoPublica: $("#opp option:selected").val(),
+                                qualPosicaoPublica: $("#qualPosicao").val(),
+                                estrangeiro: $("#ee option:selected").val(),
+                                nacionalidade: $("#nacionalidade").val(),
+                                filiacaoPassaporte: $("#filiacao").val(),
+                                numeroSerie: $("#numeroSerie").val()
                             }
-                        }, 1200);
+
+                            vtexjs.checkout.getOrderForm()
+                                .then(function (orderForm) {
+
+                                    let orderF = orderForm
+
+                                    if (orderF.openTextField != null) {
+
+                                        let valorCampo = orderF.openTextField.value
+                                        let valoresCoaf = JSON.stringify(clientObj)
+
+                                        let observationValue = ['dadosCoaf:', valoresCoaf, 'codigoVendedor', valorCampo].join(' ')
+
+                                        return vtexjs.checkout.sendAttachment('openTextField', { value: observationValue });
+                                    }
+                                    else {
+
+                                        let valoresCoaf = JSON.stringify(clientObj)
+                                        // console.log('Não existe valor anterior', 'valor do campo:', orderF.openTextField)
+                                        return vtexjs.checkout.sendAttachment('openTextField', { value: valoresCoaf })
+                                    }
+
+                                    // return vtexjs.checkout.sendAttachment('openTextField');
+
+                                }).done(function (orderForm) {
+                                    // console.log("openTextField preenchido com: ", orderForm.openTextField);
+                                });
+                        });
+
                     },
+
                     addHtml: function () {
                         $(
                             '\n              <div class="summary-seller-wrap">\n                  <div class="seller-form">\n                      <fieldset class="seller-fieldset">\n                          <div class="seller-label">\n                              <label for="cart-seller">Código do vendedor</label>\n<div class="info-cod-seller">\n<i aria-hidden="true" class="icon-question-sign help-seller"></i>\n<div class="seller-details-popup field-help">\n<h5 class="help-seller-title">Sobre o código do vendedor</h5>\n<span>• Campo não obrigatório.</span>\n<span>• Qualquer benefício vinculado ao código não é cumulativo.</span>\n</div>\n</div>\n                          </div>\n                          <div class="seller-fields">\n                              <span class="seller-fields__inputs">\n                                  <input type="text" id="seller" class="seller-value seller input-small" placeholder="Código do vendendor" />\n                                  <button id="cart-seller-code-add" class="btn">Adicionar</button>\n                              </span>\n                          </div>\n                          <div class="seller-remove" style="display:none">\n                              <p class="seller-text"></p>\n                              <small class="remove-seller">\n                                  <a>excluir</a>\n                              </small>\n                          </div>\n                      </fieldset>\n                  </div>\n              </div>'
@@ -264,4 +327,11 @@
             });
     },
 });
-
+// checkOpenTextField: function () {
+                    //     setTimeout(function () {
+                    //         if (vtexjs && vtexjs.checkout && vtexjs.checkout.orderForm && vtexjs.checkout.orderForm.openTextField) {
+                    //             var e = vtexjs.checkout.orderForm.openTextField.value;
+                    //             console.log(e), e && ($(".seller-text").text(e), $(".seller-remove").show(), $(".seller-fields").hide());
+                    //         }
+                    //     }, 1200);
+                    // },
